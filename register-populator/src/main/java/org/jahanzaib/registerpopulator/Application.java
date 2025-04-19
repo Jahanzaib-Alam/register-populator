@@ -33,8 +33,10 @@ public class Application implements CommandLineRunner {
 			log.error("Invalid command line date argument passed. Expected format is dd/MM/yyyy. Program will stop.");
 			return;
 		}
+		log.info("Running application for date: {}", dateToUpdate);
 
 		attendanceProcessor.processAttendance(dateToUpdate);
+        attendanceProcessor.processAbsences(dateToUpdate);
 
 		System.out.println("Application end...");
 	}

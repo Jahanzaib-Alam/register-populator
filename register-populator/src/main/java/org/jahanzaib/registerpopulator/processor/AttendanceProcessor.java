@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,22 +19,27 @@ public class AttendanceProcessor {
 	private final GoogleSheetsService sheetsService;
 	private final List<AttendanceSource> attendanceSources;
 
+	private static final DateTimeFormatter NEW_SHEET_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyMMdd");
+
 	public void processAttendance(LocalDate dateToUpdate) {
 		List<String> namesOfAttendeesForDate = new ArrayList<>();
 
 		for (AttendanceSource attendanceSource : attendanceSources) {
-			namesOfAttendeesForDate = attendanceSource.getNamesForDateFromAttendanceForm(dateToUpdate);
+			namesOfAttendeesForDate.addAll(attendanceSource.getNamesForDateFromAttendanceForm(dateToUpdate));
 		}
 
 		if (CollectionUtils.isEmpty(namesOfAttendeesForDate)) {
 			log.info("No names were found to add to register, exiting program...");
 			return;
 		}
-		sheetsService.createSheetWithMatchedNamesForDate(dateToUpdate, namesOfAttendeesForDate);
+		String newSheetName = dateToUpdate.format(NEW_SHEET_DATE_FORMATTER);
+		sheetsService.createSheetWithNames(newSheetName, namesOfAttendeesForDate);
 	}
 
 	public void processAbsences(LocalDate dateToUpdate) {
-		List<String> namesOfAttendeesForDate = sheetsService.getNamesForDateFromAbsenceForm(dateToUpdate);
-
+		List<String> namesOfAbsenteesForDate = sheetsService.getNamesForDateFromAbsenceForm(dateToUpdate);
+		log.info("Names of absentees: {}", namesOfAbsenteesForDate);
+		String newSheetName = "A-" + dateToUpdate.format(NEW_SHEET_DATE_FORMATTER);
+		sheetsService.createSheetWithNames(newSheetName, namesOfAbsenteesForDate);
 	}
 }

@@ -4,6 +4,7 @@ import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jahanzaib.registerpopulator.util.DateUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -33,7 +34,6 @@ public class GoogleSheetsService {
 	private String registerSpreadsheetId;
 
 	private static final DateTimeFormatter SOURCE_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-	private static final DateTimeFormatter NEW_SHEET_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyMMdd");
 
 	public List<String> getNamesForDateFromAttendanceForm(LocalDate dateToUpdate) {
 		List<String> matchedNames = new ArrayList<>();
@@ -67,29 +67,33 @@ public class GoogleSheetsService {
 		List<List<Object>> sourceSheetValues;
 		try {
 			ValueRange sourceSheetValueRange = sheetsService.spreadsheets().values()
-					.get(attendanceFormSpreadsheetId, attendanceFormSheetName + "!A:B")
+					.get(absenceFormSpreadsheetId, absenceFormSheetName + "!A:F")
 					.execute();
 			sourceSheetValues = sourceSheetValueRange != null ? sourceSheetValueRange.getValues() : Collections.emptyList();
 		} catch (IOException e) {
 			log.error("Error getting attendance form sheet {}", e.getMessage(), e);
 			return null;
 		}
-
 		for (int i = 1; i < sourceSheetValues.size(); i++) { // start from 1 to skip header
 			List<Object> row = sourceSheetValues.get(i);
 			if (!row.isEmpty()) {
 				String rowDateString = row.get(4).toString();
+				LocalDate rowDate = DateUtil.tryParseDateString(rowDateString);
+				String rowPersonName = row.get(2).toString();
+				if (rowDate == null) {
+					log.info("Unable to parse date at row {}. Date given was {} for person named {}", i + 1, rowDateString, rowPersonName);
+					continue;
+				}
 				boolean rowAttendingOnlineString = "Yes".equals(row.get(5).toString());
-				if (LocalDate.parse(rowDateString, SOURCE_DATE_FORMATTER).equals(dateToUpdate) && rowAttendingOnlineString) {
-					matchedNames.add(row.get(2).toString()); // name column
+				if (rowDate.equals(dateToUpdate) && !rowAttendingOnlineString) {
+					matchedNames.add(rowPersonName); // name column
 				}
 			}
 		}
 		return matchedNames;
 	}
 
-	public void createSheetWithMatchedNamesForDate(LocalDate dateToUpdate, List<String> matchedNames) {
-		String newSheetName = dateToUpdate.format(NEW_SHEET_DATE_FORMATTER);
+	public void createSheetWithNames(String newSheetName, List<String> matchedNames) {
 		boolean newSheetCreated = createNewSheetInRegisterForDate(newSheetName);
 		if (newSheetCreated) {
 			addMatchedNamesToNewSheet(newSheetName, matchedNames);
