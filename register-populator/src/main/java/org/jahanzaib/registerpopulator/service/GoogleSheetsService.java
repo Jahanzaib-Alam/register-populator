@@ -127,8 +127,8 @@ public class GoogleSheetsService {
 			sheetsService.spreadsheets().batchUpdate(registerSpreadsheetId, request).execute();
 		} catch (IOException e) {
 			log.error("Error creating new sheet in attendance register {}", e.getMessage(), e);
-			return true;
+			return false;
 		}
-		return false;
+		return true;
 	}
 }

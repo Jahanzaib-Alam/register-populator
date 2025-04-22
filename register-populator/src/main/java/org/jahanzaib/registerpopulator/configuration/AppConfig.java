@@ -11,6 +11,7 @@ import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.auth.oauth2.GoogleCredentials;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -44,4 +45,9 @@ public class AppConfig {
                 .setApplicationName(APPLICATION_NAME)
                 .build();
     }
+
+	@Bean
+	public RestTemplate restTemplate() {
+		return new RestTemplate();
+	}
 }
