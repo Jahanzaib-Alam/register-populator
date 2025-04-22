@@ -29,7 +29,7 @@ public class AttendanceProcessor {
 		}
 
 		if (CollectionUtils.isEmpty(namesOfAttendeesForDate)) {
-			log.info("No names were found to add to register, exiting program...");
+			log.info("No names were found to add to register, exiting attendance method...");
 			return;
 		}
 		String newSheetName = dateToUpdate.format(NEW_SHEET_DATE_FORMATTER);
@@ -38,6 +38,10 @@ public class AttendanceProcessor {
 
 	public void processAbsences(LocalDate dateToUpdate) {
 		List<String> namesOfAbsenteesForDate = sheetsService.getNamesForDateFromAbsenceForm(dateToUpdate);
+		if (CollectionUtils.isEmpty(namesOfAbsenteesForDate)) {
+			log.info("No names were found to record absences for, exiting absences method...");
+			return;
+		}
 		log.info("Names of absentees: {}", namesOfAbsenteesForDate);
 		String newSheetName = "A-" + dateToUpdate.format(NEW_SHEET_DATE_FORMATTER);
 		sheetsService.createSheetWithNames(newSheetName, namesOfAbsenteesForDate);

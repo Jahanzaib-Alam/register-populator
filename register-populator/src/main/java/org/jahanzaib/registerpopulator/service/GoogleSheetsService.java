@@ -30,6 +30,8 @@ public class GoogleSheetsService {
 	private String absenceFormSpreadsheetId;
 	@Value("${absence-form-sheet-name}")
 	private String absenceFormSheetName;
+	@Value("${absence-year-group}")
+	private String absenceYearGroup;
 	@Value("${register-spreadsheet-id}")
 	private String registerSpreadsheetId;
 
@@ -62,18 +64,21 @@ public class GoogleSheetsService {
 	}
 
 	public List<String> getNamesForDateFromAbsenceForm(LocalDate dateToUpdate) {
-		List<String> matchedNames = new ArrayList<>();
-
 		List<List<Object>> sourceSheetValues;
 		try {
 			ValueRange sourceSheetValueRange = sheetsService.spreadsheets().values()
-					.get(absenceFormSpreadsheetId, absenceFormSheetName + "!A:F")
+					.get(absenceFormSpreadsheetId, absenceFormSheetName + "!A:I")
 					.execute();
 			sourceSheetValues = sourceSheetValueRange != null ? sourceSheetValueRange.getValues() : Collections.emptyList();
 		} catch (IOException e) {
 			log.error("Error getting attendance form sheet {}", e.getMessage(), e);
 			return null;
 		}
+		return extractMatchedNamesFromSheetValues(dateToUpdate, sourceSheetValues);
+	}
+
+	private List<String> extractMatchedNamesFromSheetValues(LocalDate dateToUpdate, List<List<Object>> sourceSheetValues) {
+		List<String> matchedNames = new ArrayList<>();
 		for (int i = 1; i < sourceSheetValues.size(); i++) { // start from 1 to skip header
 			List<Object> row = sourceSheetValues.get(i);
 			if (!row.isEmpty()) {
@@ -81,12 +86,13 @@ public class GoogleSheetsService {
 				LocalDate rowDate = DateUtil.tryParseDateString(rowDateString);
 				String rowPersonName = row.get(2).toString();
 				if (rowDate == null) {
-					log.info("Unable to parse date at row {}. Date given was {} for person named {}", i + 1, rowDateString, rowPersonName);
+					log.debug("Unable to parse date at row {}. Date given was {} for person named {}", i + 1, rowDateString, rowPersonName);
 					continue;
 				}
 				boolean rowAttendingOnlineString = "Yes".equals(row.get(5).toString());
-				if (rowDate.equals(dateToUpdate) && !rowAttendingOnlineString) {
-					matchedNames.add(rowPersonName); // name column
+				boolean isForSelectedYearGroup = absenceYearGroup.equals(row.get(8).toString());
+				if (rowDate.equals(dateToUpdate) && isForSelectedYearGroup && !rowAttendingOnlineString) {
+					matchedNames.add(rowPersonName);
 				}
 			}
 		}
