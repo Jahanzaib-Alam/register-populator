@@ -37,6 +37,7 @@ public class AttendanceProcessor {
             .registerSpreadsheetId(populateRequest.getRegisterSpreadsheetId())
             .attendanceFormSpreadsheetId(populateRequest.getAttendanceFormSpreadsheetId())
             .attendanceFormSheetName(populateRequest.getAttendanceFormSheetName())
+            .checkZoom(populateRequest.isCheckZoom())
             .build();
 
     for (AttendanceSource attendanceSource : attendanceSources) {

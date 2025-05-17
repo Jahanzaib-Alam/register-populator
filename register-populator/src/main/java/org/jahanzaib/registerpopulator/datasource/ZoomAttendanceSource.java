@@ -15,6 +15,9 @@ public class ZoomAttendanceSource implements AttendanceSource {
   @Override
   public List<String> getNamesForDateFromAttendanceForm(AttendanceSourceParams params) {
     List<String> attendees = new ArrayList<>();
+    if (!params.checkZoom()) {
+      return attendees;
+    }
     attendees.add("--ZOOM PARTICIPANTS BELOW--");
     attendees.addAll(zoomService.getNamesForDateFromAttendanceForm(params.dateToUpdate()));
 

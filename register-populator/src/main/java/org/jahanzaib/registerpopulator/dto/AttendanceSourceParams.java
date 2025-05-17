@@ -8,4 +8,5 @@ public record AttendanceSourceParams(
     LocalDate dateToUpdate,
     String registerSpreadsheetId,
     String attendanceFormSpreadsheetId,
-    String attendanceFormSheetName) {}
+    String attendanceFormSheetName,
+    boolean checkZoom) {}

@@ -16,7 +16,7 @@ public class PopulateRequestDTO {
   @NotBlank private String registerSpreadsheetId;
 
   @NotNull(message = "dateToUpdate is required")
-  @JsonFormat(pattern = "dd/MM/yy")
+  @JsonFormat(pattern = "dd/MM/yyyy")
   private LocalDate dateToUpdate;
 
   @NotBlank private String attendanceFormSpreadsheetId;
@@ -27,4 +27,6 @@ public class PopulateRequestDTO {
   @JsonProperty("absence-year-group")
   @Min(value = 1, message = "absence-year-group must be at least 1")
   private int absenceYearGroup;
+
+  @NotBlank private boolean checkZoom;
 }

@@ -7,10 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jahanzaib.registerpopulator.dto.PopulateRequestDTO;
 import org.jahanzaib.registerpopulator.processor.AttendanceProcessor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/register-populator")
@@ -21,7 +18,7 @@ public class RegisterPopulatorController {
   private final AttendanceProcessor attendanceProcessor;
 
   @RateLimiter(name = "registerPopulatorApiLimiter")
-  @GetMapping("/populate")
+  @PostMapping("/populate")
   public ResponseEntity<?> populateAttendancesAndAbsences(
       @Valid @RequestBody PopulateRequestDTO populateRequest) {
     log.info("Running application for date: {}", populateRequest.getDateToUpdate());

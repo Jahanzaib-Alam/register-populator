@@ -10,9 +10,7 @@ import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.auth.oauth2.GoogleCredentials;
 import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.List;
@@ -26,9 +24,8 @@ public class AppConfig {
   private static final String APPLICATION_NAME = "Register Populator";
   private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
   private static final List<String> SCOPES = List.of(SheetsScopes.SPREADSHEETS);
-  private static final String CREDENTIALS_FILE_PATH = "/service-account.json";
 
-  @Value("google.credentials-json")
+  @Value("${google.credentials-json}")
   private String googleCredentialsJson;
 
   @Bean
