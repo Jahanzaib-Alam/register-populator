@@ -7,3 +7,10 @@ resilience4j.ratelimiter:
       limit-for-period: 5
       limit-refresh-period: 1m
       timeout-duration: 0
+
+zoom:
+  api-url: https://api.zoom.us/v2
+  account-id: ${zoomAccountId}
+  client-id: ${zoomClientId}
+  client-secret: ${zoomClientSecret}
+  user-id: ${zoomUserId}
