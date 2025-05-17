@@ -3,7 +3,7 @@ allowed:
 
 resilience4j.ratelimiter:
   instances:
-    steamApiLimiter:
+    registerPopulatorApiLimiter:
       limit-for-period: 5
       limit-refresh-period: 1m
       timeout-duration: 0
