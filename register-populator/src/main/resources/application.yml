@@ -8,6 +8,9 @@ resilience4j.ratelimiter:
       limit-refresh-period: 1m
       timeout-duration: 0
 
+google:
+  credentials-json: ${googleCredentialsJson}
+
 zoom:
   api-url: https://api.zoom.us/v2
   account-id: ${zoomAccountId}

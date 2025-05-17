@@ -9,11 +9,14 @@ import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.auth.oauth2.GoogleCredentials;
+import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
@@ -25,17 +28,18 @@ public class AppConfig {
   private static final List<String> SCOPES = List.of(SheetsScopes.SPREADSHEETS);
   private static final String CREDENTIALS_FILE_PATH = "/service-account.json";
 
+  @Value("google.credentials-json")
+  private String googleCredentialsJson;
+
   @Bean
   public Sheets sheetsService() throws IOException, GeneralSecurityException {
     NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
 
-    InputStream credentialsFileStream = AppConfig.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
-    if (credentialsFileStream == null) {
-      throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
-    }
-    // Load service account credentials from JSON
+    // Load service account credentials
     GoogleCredentials credentials =
-        GoogleCredentials.fromStream(credentialsFileStream).createScoped(SCOPES);
+        GoogleCredentials.fromStream(
+                new ByteArrayInputStream(googleCredentialsJson.getBytes(StandardCharsets.UTF_8)))
+            .createScoped(SCOPES);
 
     HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(credentials);
 
