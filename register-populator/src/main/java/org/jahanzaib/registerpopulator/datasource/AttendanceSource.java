@@ -1,8 +1,8 @@
 package org.jahanzaib.registerpopulator.datasource;
 
-import java.time.LocalDate;
 import java.util.List;
+import org.jahanzaib.registerpopulator.dto.AttendanceSourceParams;
 
 public interface AttendanceSource {
-	List<String> getNamesForDateFromAttendanceForm(LocalDate dateToUpdate);
+  List<String> getNamesForDateFromAttendanceForm(AttendanceSourceParams params);
 }

@@ -14,32 +14,34 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RequiredArgsConstructor
 @Component
 public class ZoomOAuthManager {
-	private final RestTemplate restTemplate;
+  private final RestTemplate restTemplate;
 
-	@Value("${zoom.client-id}")
-	private String clientId;
-	@Value("${zoom.client-secret}")
-	private String clientSecret;
-	@Value("${zoom.account-id}")
-	private String accountId;
+  @Value("${zoom.client-id}")
+  private String clientId;
 
-	public String getAccessToken() {
-		String url = UriComponentsBuilder
-				.fromUriString("https://zoom.us/oauth/token")
-				.queryParam("grant_type", "account_credentials")
-				.queryParam("account_id", accountId)
-				.toUriString();
+  @Value("${zoom.client-secret}")
+  private String clientSecret;
 
-		HttpHeaders headers = new HttpHeaders();
-		headers.setBasicAuth(clientId, clientSecret);
-		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+  @Value("${zoom.account-id}")
+  private String accountId;
 
-		HttpEntity<?> request = new HttpEntity<>(headers);
+  public String getAccessToken() {
+    String url =
+        UriComponentsBuilder.fromUriString("https://zoom.us/oauth/token")
+            .queryParam("grant_type", "account_credentials")
+            .queryParam("account_id", accountId)
+            .toUriString();
 
-		var response = restTemplate.exchange(url, HttpMethod.POST, request, ZoomAuthResponse.class);
-		if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-			return response.getBody().access_token();
-		}
-		return null;
-	}
+    HttpHeaders headers = new HttpHeaders();
+    headers.setBasicAuth(clientId, clientSecret);
+    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+    HttpEntity<?> request = new HttpEntity<>(headers);
+
+    var response = restTemplate.exchange(url, HttpMethod.POST, request, ZoomAuthResponse.class);
+    if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+      return response.getBody().access_token();
+    }
+    return null;
+  }
 }
