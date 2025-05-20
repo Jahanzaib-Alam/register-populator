@@ -29,4 +29,5 @@ public class PopulateRequestDTO {
   private int absenceYearGroup;
 
   @NotBlank private boolean checkZoom;
+  @NotBlank private String friendCode;
 }

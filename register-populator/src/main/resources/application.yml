@@ -8,6 +8,8 @@ resilience4j.ratelimiter:
       limit-refresh-period: 1m
       timeout-duration: 0
 
+friendCode: ${friendCode}
+
 google:
   credentials-json: ${googleCredentialsJson}
 
