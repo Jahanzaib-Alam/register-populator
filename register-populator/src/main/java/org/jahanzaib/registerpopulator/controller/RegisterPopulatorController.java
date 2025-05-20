@@ -20,7 +20,7 @@ public class RegisterPopulatorController {
   private final AttendanceProcessor attendanceProcessor;
 
   @Value("${friendCode}")
-  private final String friendCode;
+  private String friendCode;
 
   @RateLimiter(name = "registerPopulatorApiLimiter")
   @PostMapping("/populate")

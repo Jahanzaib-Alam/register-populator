@@ -63,10 +63,6 @@ public class AttendanceProcessor {
             .absenceYearGroup(populateRequest.getAbsenceYearGroup())
             .build();
     List<String> namesOfAbsenteesForDate = sheetsService.getNamesForDateFromAbsenceForm(params);
-    if (CollectionUtils.isEmpty(namesOfAbsenteesForDate)) {
-      log.info("No names were found to record absences for, exiting absences method...");
-      return;
-    }
     log.info("Names of absentees: {}", namesOfAbsenteesForDate);
     String newSheetName = "A-" + populateRequest.getDateToUpdate().format(NEW_SHEET_DATE_FORMATTER);
     sheetsService.createSheetWithNames(
